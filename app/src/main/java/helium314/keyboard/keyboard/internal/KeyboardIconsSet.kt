@@ -92,6 +92,7 @@ class KeyboardIconsSet private constructor() {
             "clipboard_normal_key" to ToolbarKey.CLIPBOARD.name.lowercase(Locale.US),
             "cut_key" to ToolbarKey.CUT.name.lowercase(Locale.US),
             "incognito_key" to ToolbarKey.INCOGNITO.name.lowercase(Locale.US),
+            "touchpad_key" to ToolbarKey.TOUCHPAD.name.lowercase(Locale.US),
             "settings_key" to ToolbarKey.SETTINGS.name.lowercase(Locale.US),
             "start_onehanded_mode_key" to ToolbarKey.ONE_HANDED.name.lowercase(Locale.US),
             "floating_key" to ToolbarKey.FLOATING.name.lowercase(Locale.US),
@@ -140,6 +141,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.ONE_HANDED -> R.drawable.sym_keyboard_start_onehanded_holo
                     ToolbarKey.FLOATING -> R.drawable.ic_drag_indicator
                     ToolbarKey.INCOGNITO -> R.drawable.ic_incognito_final
+                    ToolbarKey.TOUCHPAD -> R.drawable.ic_touchpad
                     ToolbarKey.AUTOCORRECT -> R.drawable.ic_autocorrect
                     ToolbarKey.CLEAR_CLIPBOARD -> R.drawable.sym_keyboard_clear_clipboard_holo
                     ToolbarKey.CLOSE_HISTORY -> R.drawable.ic_close
@@ -215,6 +217,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.ONE_HANDED -> R.drawable.sym_keyboard_start_onehanded_lxx
                     ToolbarKey.FLOATING -> R.drawable.ic_drag_indicator
                     ToolbarKey.INCOGNITO -> R.drawable.ic_incognito_final
+                    ToolbarKey.TOUCHPAD -> R.drawable.ic_touchpad
                     ToolbarKey.AUTOCORRECT -> R.drawable.ic_autocorrect
                     ToolbarKey.CLEAR_CLIPBOARD -> R.drawable.sym_keyboard_clear_clipboard_lxx
                     ToolbarKey.CLOSE_HISTORY -> R.drawable.ic_close
@@ -290,6 +293,7 @@ class KeyboardIconsSet private constructor() {
                     ToolbarKey.ONE_HANDED -> R.drawable.sym_keyboard_start_onehanded_rounded
                     ToolbarKey.FLOATING -> R.drawable.ic_drag_indicator
                     ToolbarKey.INCOGNITO -> R.drawable.ic_incognito_final
+                    ToolbarKey.TOUCHPAD -> R.drawable.ic_touchpad_rounded
                     ToolbarKey.AUTOCORRECT -> R.drawable.ic_autocorrect_rounded
                     ToolbarKey.CLEAR_CLIPBOARD -> R.drawable.sym_keyboard_clear_clipboard_rounded
                     ToolbarKey.CLOSE_HISTORY -> R.drawable.ic_close_rounded

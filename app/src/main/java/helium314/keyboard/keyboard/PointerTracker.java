@@ -179,6 +179,7 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
     private static boolean sInKeySwipe = false;
 
     // Touchpad mode for cursor control
+    public static boolean sPersistentTouchpadModeActive = false;
     private static boolean sTouchpadModeActive = false;
     private boolean mInTouchpadMode = false;
     private int mTouchpadLastX = 0;
@@ -1000,7 +1001,7 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
             int dY = y - mStartY;
 
             // Check if touchpad mode is active and we're in it
-            if (sTouchpadModeActive && !mInTouchpadMode) {
+            if ((sTouchpadModeActive || sPersistentTouchpadModeActive) && !mInTouchpadMode) {
                 // Just entered touchpad mode - initialize
                 mInTouchpadMode = true;
                 mTouchpadLastX = x;
@@ -1008,7 +1009,9 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
                 mTouchpadAccX = 0;
                 mTouchpadAccY = 0;
                 // Signal start of touchpad mode for visual feedback (dimming)
-                sListener.onCustomRequest(KeyboardActionListener.CODE_TOUCHPAD_ON);
+                if (!sPersistentTouchpadModeActive) {
+                    sListener.onCustomRequest(KeyboardActionListener.CODE_TOUCHPAD_ON);
+                }
                 return;
             }
 
@@ -1212,14 +1215,16 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
             sInKeySwipe = false;
 
             // Exit touchpad mode if active
+            boolean wasTouchpad = mInTouchpadMode;
             if (mInTouchpadMode) {
                 mInTouchpadMode = false;
-                sTouchpadModeActive = false;
-                sListener.onCustomRequest(KeyboardActionListener.CODE_TOUCHPAD_OFF); // Signal end of touchpad mode
-                                                                                     // (restore visuals)
+                if (!sPersistentTouchpadModeActive) {
+                    sTouchpadModeActive = false;
+                    sListener.onCustomRequest(KeyboardActionListener.CODE_TOUCHPAD_OFF);
+                }
             }
 
-            if (mInHorizontalSwipe || mInVerticalSwipe) {
+            if (mInHorizontalSwipe || mInVerticalSwipe || wasTouchpad) {
                 mInHorizontalSwipe = false;
                 mInVerticalSwipe = false;
                 sListener.onEndSpaceSwipe();

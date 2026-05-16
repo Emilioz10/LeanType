@@ -367,6 +367,8 @@ public final class EmojiPalettesView extends LinearLayout
         // Visual indicator for selected tab
         if (categoryId == mEmojiCategory.getCurrentCategoryId()) {
             mColors.setColor(iconView, ColorType.EMOJI_CATEGORY_SELECTED);
+            iconView.setBackgroundResource(R.drawable.toolbar_key_background);
+            Settings.getValues().mColors.setColor(iconView.getBackground(), ColorType.TOOL_BAR_EXPAND_KEY_BACKGROUND);
         }
         
         if (categoryId == EmojiCategory.ID_RECENTS) {
@@ -700,7 +702,7 @@ public final class EmojiPalettesView extends LinearLayout
         // Restore UI internally
         setupCategoryTabs();
 
-        mEmojiCategoryPageIndicatorView.setVisibility(View.VISIBLE);
+        mEmojiCategoryPageIndicatorView.setVisibility(View.GONE);
         mPager.setVisibility(View.VISIBLE);
         if (mSearchContainer != null)
             mSearchContainer.setVisibility(View.GONE);
@@ -1005,10 +1007,16 @@ public final class EmojiPalettesView extends LinearLayout
                 final View old = mTabStrip.findViewWithTag((long) oldCategoryId);
                 final View current = mTabStrip.findViewWithTag((long) categoryId);
 
-                if (old instanceof ImageView)
+                if (old instanceof ImageView) {
                     Settings.getValues().mColors.setColor((ImageView) old, ColorType.EMOJI_CATEGORY);
-                if (current instanceof ImageView)
+                    old.setBackgroundColor(android.graphics.Color.WHITE);
+                    Settings.getValues().mColors.setBackground((ImageView) old, ColorType.STRIP_BACKGROUND);
+                }
+                if (current instanceof ImageView) {
                     Settings.getValues().mColors.setColor((ImageView) current, ColorType.EMOJI_CATEGORY_SELECTED);
+                    current.setBackgroundResource(R.drawable.toolbar_key_background);
+                    Settings.getValues().mColors.setColor(current.getBackground(), ColorType.TOOL_BAR_EXPAND_KEY_BACKGROUND);
+                }
             }
         }
     }

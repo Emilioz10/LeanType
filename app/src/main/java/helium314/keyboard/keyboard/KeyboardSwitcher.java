@@ -69,6 +69,7 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     private SuggestionStripView mSuggestionStripView;
     private LinearLayout mStripContainer;
     private ClipboardHistoryView mClipboardHistoryView;
+    private TouchpadView mTouchpadView;
     private TextView mFakeToastView;
     private LatinIME mLatinIME;
     private RichInputMethodManager mRichImm;
@@ -333,7 +334,11 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
         final int stripVisibility = settingsValues.mToolbarMode == ToolbarMode.HIDDEN ? View.GONE : View.VISIBLE;
         mStripContainer.setVisibility(stripVisibility);
         PointerTracker.switchTo(mKeyboardView);
-        mKeyboardView.setVisibility(visibility);
+        if (PointerTracker.sPersistentTouchpadModeActive) {
+            mKeyboardView.setVisibility(View.GONE);
+        } else {
+            mKeyboardView.setVisibility(visibility);
+        }
         // The visibility of {@link #mKeyboardView} must be aligned with {@link
         // #MainKeyboardFrame}.
         // @see #getVisibleKeyboardView() and
@@ -347,6 +352,15 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
         mSuggestionStripView.setVisibility(stripVisibility);
         mClipboardHistoryView.setVisibility(View.GONE);
         mClipboardHistoryView.stopClipboardHistory();
+        
+        if (PointerTracker.sPersistentTouchpadModeActive) {
+            if (mTouchpadView != null) {
+                mTouchpadView.setVisibility(visibility);
+                mTouchpadView.applyColors(Settings.getValues().mColors);
+            }
+        } else {
+            if (mTouchpadView != null) mTouchpadView.setVisibility(View.GONE);
+        }
     }
 
     // Implements {@link KeyboardState.SwitchActions}.
@@ -539,6 +553,54 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
         if (mLatinIME != null && mLatinIME.getFloatingKeyboardManager() != null) {
             mLatinIME.getFloatingKeyboardManager().toggle();
         }
+    }
+
+    public void showTouchpadView() {
+        if (mTouchpadView == null) return;
+        // Get keyboard height before hiding it
+        int keyboardHeight = mKeyboardView.getHeight();
+        if (keyboardHeight <= 0) {
+            keyboardHeight = mKeyboardView.getMeasuredHeight();
+        }
+        mKeyboardView.setVisibility(View.GONE);
+        mEmojiPalettesView.setVisibility(View.GONE);
+        mClipboardHistoryView.setVisibility(View.GONE);
+        // Hide one-handed mode buttons to prevent overlap
+        mKeyboardViewWrapper.findViewById(R.id.btn_stop_one_handed_mode).setVisibility(View.GONE);
+        mKeyboardViewWrapper.findViewById(R.id.btn_switch_one_handed_mode).setVisibility(View.GONE);
+        mKeyboardViewWrapper.findViewById(R.id.btn_resize_one_handed_mode).setVisibility(View.GONE);
+        // Set touchpad height to match the keyboard
+        if (keyboardHeight > 0) {
+            mTouchpadView.setLayoutParams(new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT, keyboardHeight));
+            // Apply bottom padding to avoid overlapping the navigation bar
+            mTouchpadView.setPadding(
+                mKeyboardView.getPaddingLeft(),
+                mKeyboardView.getPaddingTop(),
+                mKeyboardView.getPaddingRight(),
+                mKeyboardView.getPaddingBottom()
+            );
+        }
+        mTouchpadView.applyColors(Settings.getValues().mColors);
+        mTouchpadView.setVisibility(View.VISIBLE);
+        mMainKeyboardFrame.setVisibility(View.VISIBLE);
+    }
+
+    public void hideTouchpadView() {
+        if (mTouchpadView == null) return;
+        mTouchpadView.setVisibility(View.GONE);
+        mKeyboardView.setVisibility(View.VISIBLE);
+        mKeyboardView.setAlpha(1.0f);
+        // Restore one-handed buttons if needed
+        if (mKeyboardViewWrapper.getOneHandedModeEnabled()) {
+            mKeyboardViewWrapper.findViewById(R.id.btn_stop_one_handed_mode).setVisibility(View.VISIBLE);
+            mKeyboardViewWrapper.findViewById(R.id.btn_switch_one_handed_mode).setVisibility(View.VISIBLE);
+            mKeyboardViewWrapper.findViewById(R.id.btn_resize_one_handed_mode).setVisibility(View.VISIBLE);
+        }
+    }
+
+    public TouchpadView getTouchpadView() {
+        return mTouchpadView;
     }
 
     public void toggleSplitKeyboardMode() {
@@ -787,6 +849,9 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
         prefs.registerOnSharedPreferenceChangeListener(mSuggestionStripView);
         prefs.registerOnSharedPreferenceChangeListener(mClipboardHistoryView);
         PointerTracker.switchTo(mKeyboardView);
+
+        mTouchpadView = mCurrentInputView.findViewById(R.id.touchpad_view);
+
         return mCurrentInputView;
     }
 
