@@ -81,6 +81,24 @@ object TextExpanderUtils {
             result = result.replace("%clipboard%", clipText)
         }
 
+        // Resolve %day%
+        if (result.contains("%day%")) {
+            val dayStr = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date())
+            result = result.replace("%day%", dayStr)
+        }
+
+        // Resolve %time12%
+        if (result.contains("%time12%")) {
+            val time12Str = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+            result = result.replace("%time12%", time12Str)
+        }
+
+        // Resolve %day_short%
+        if (result.contains("%day_short%")) {
+            val dayShortStr = SimpleDateFormat("EEE", Locale.getDefault()).format(Date())
+            result = result.replace("%day_short%", dayShortStr)
+        }
+
         return result
     }
 

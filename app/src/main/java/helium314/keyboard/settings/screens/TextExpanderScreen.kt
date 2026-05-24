@@ -6,6 +6,10 @@ package helium314.keyboard.settings.screens
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +20,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,25 +62,25 @@ import helium314.keyboard.settings.SettingsActivity
 import helium314.keyboard.settings.dialogs.ThreeButtonAlertDialog
 import helium314.keyboard.settings.preferences.SwitchPreference
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TextExpanderScreen(onClickBack: () -> Unit) {
     val context = LocalContext.current
     val prefs = context.prefs()
 
-    // Trigger recomposition on preference changes
-    val prefUpdateState = (context as? SettingsActivity)?.prefChanged?.collectAsState()
-    
-    var prefixText by remember(prefUpdateState?.value) {
+    var prefixText by remember {
         mutableStateOf(TextExpanderUtils.getPrefix(context))
     }
     
-    var isExpanderEnabled by remember(prefUpdateState?.value) {
+    var isExpanderEnabled by remember {
         mutableStateOf(TextExpanderUtils.isEnabled(context))
     }
 
-    var shortcutsMap by remember(prefUpdateState?.value) {
+    var shortcutsMap by remember {
         mutableStateOf(TextExpanderUtils.getShortcuts(context))
     }
+
+    var isGuideExpanded by remember { mutableStateOf(false) }
 
     var showAddDialog by remember { mutableStateOf(false) }
     var editingShortcut by remember { mutableStateOf("") }
@@ -99,30 +107,119 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Informational Card
+                    // Premium Collapsible Feature Guide Card
                     androidx.compose.material3.Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                         )
                     ) {
                         Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = "Dynamic Variables Supported",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "Use these placeholders in your templates:\n" +
-                                        "• %date% : Inserts current date (YYYY-MM-DD)\n" +
-                                        "• %time% : Inserts current time (HH:MM)\n" +
-                                        "• %clipboard% : Inserts clipboard text",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            // Clickable Header Row
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { isGuideExpanded = !isGuideExpanded }
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "💡 Quick Feature Guide",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_arrow_left),
+                                    contentDescription = if (isGuideExpanded) "Collapse" else "Expand",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.rotate(if (isGuideExpanded) -90f else 180f)
+                                )
+                            }
+                            
+                            AnimatedVisibility(visible = isGuideExpanded) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Text(
+                                            text = "How it works:",
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                            text = "1. Set a Prefix (e.g. '.' or ';') to avoid accidental triggers.\n" +
+                                                    "2. Add a Shortcut keyword (e.g. 'brb') and its Template expansion.\n" +
+                                                    "3. Type your Prefix + Shortcut on the keyboard (e.g. '.brb') and press Space or Punctuation to expand instantly!",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+
+                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Text(
+                                            text = "How Template Placeholders Work:",
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                            text = "Placeholders are special tags you can write in your templates. When you type the shortcut, HeliboardL automatically replaces them with real-time values (like the current date, time, or your clipboard content) before inserting the text.\n\n" +
+                                                    "Example Template: 'Hi, let's meet on %day% at %time%! My clipboard says: %clipboard%'\n" +
+                                                    "Expands to: 'Hi, let's meet on Monday at 14:30! My clipboard says: [copied text]'",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                                    
+                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                        Text(
+                                            text = "Supported Template Placeholders:",
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                PlaceholderChip(tag = "%date%", desc = "Date (YYYY-MM-DD)")
+                                                PlaceholderChip(tag = "%time%", desc = "Time (24h, HH:MM)")
+                                                PlaceholderChip(tag = "%time12%", desc = "Time (12h, hh:mm AM/PM)")
+                                            }
+                                            Column(modifier = Modifier.weight(1.1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                                PlaceholderChip(tag = "%clipboard%", desc = "Clipboard content")
+                                                PlaceholderChip(tag = "%day%", desc = "Day (e.g. Monday)")
+                                                PlaceholderChip(tag = "%day_short%", desc = "Day short (e.g. Mon)")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -212,7 +309,7 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
         )
 
         // Floating Action Button to Add New Shortcut
-        if (isExpanderEnabled) {
+        if (isExpanderEnabled && !WindowInsets.isImeVisible) {
             ExtendedFloatingActionButton(
                 onClick = {
                     editingShortcut = ""
@@ -339,6 +436,33 @@ private fun ShortcutItem(
                     tint = MaterialTheme.colorScheme.error
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun PlaceholderChip(tag: String, desc: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    ) {
+        Column {
+            Text(
+                text = tag,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+            )
+            Text(
+                text = desc,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = MaterialTheme.typography.bodySmall.fontSize * 0.9f
+            )
         }
     }
 }

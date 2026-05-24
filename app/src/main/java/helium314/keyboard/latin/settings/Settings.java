@@ -208,6 +208,8 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
     public static final String PREF_LIBRARY_CHECKSUM = "lib_checksum";
     public static final String PREF_SAVE_SUBTYPE_PER_APP = "save_subtype_per_app";
     public static final String PREF_SAVED_APP_SUBTYPE_PREFIX = "saved_app_subtype_";
+    public static final String PREF_DONT_SHOW_SPONSOR_DIALOG = "dont_show_sponsor_dialog";
+    public static final String PREF_LAST_SPONSOR_DIALOG_SHOWN = "last_sponsor_dialog_shown";
 
     private Context mContext;
     private SharedPreferences mPrefs;
