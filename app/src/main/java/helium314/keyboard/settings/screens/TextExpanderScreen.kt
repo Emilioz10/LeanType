@@ -184,7 +184,7 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = "Placeholders are special tags you can write in your templates. When you type the shortcut, HeliboardL automatically replaces them with real-time values (like the current date, time, or your clipboard content) before inserting the text.\n\n" +
+                                            text = "Placeholders are special tags you can write in your templates. When you type the shortcut, LeanType automatically replaces them with real-time values (like the current date, time, or your clipboard content) before inserting the text.\n\n" +
                                                     "Example Template: 'Hi, let's meet on %day% at %time%! My clipboard says: %clipboard%'\n" +
                                                     "Expands to: 'Hi, let's meet on Monday at 14:30! My clipboard says: [copied text]'",
                                             style = MaterialTheme.typography.bodyMedium,

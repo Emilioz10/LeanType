@@ -579,43 +579,31 @@ class ClipboardHistoryView @JvmOverloads constructor(
 
 
     override fun onClipInserted(position: Int) {
-        if (clipboardAdapter.isFiltering) {
-             clipboardAdapter.refresh()
-        } else {
-             clipboardAdapter.notifyItemInserted(position)
-             clipboardRecyclerView.smoothScrollToPosition(position)
+        clipboardAdapter.refresh()
+        if (!clipboardAdapter.isFiltering) {
+             clipboardRecyclerView.smoothScrollToPosition(0)
         }
         updateEmptyView(clipboardAdapter.isFiltering)
     }
 
     override fun onClipsRemoved(position: Int, count: Int) {
-        if (clipboardAdapter.isFiltering) {
-             clipboardAdapter.refresh()
-        } else {
-             clipboardAdapter.notifyItemRangeRemoved(position, count)
-        }
+        clipboardAdapter.refresh()
         updateEmptyView(clipboardAdapter.isFiltering)
     }
 
     override fun onClipMoved(oldPosition: Int, newPosition: Int) {
-        if (clipboardAdapter.isFiltering) {
-             clipboardAdapter.refresh()
-        } else {
-             clipboardAdapter.notifyItemMoved(oldPosition, newPosition)
-             clipboardAdapter.notifyItemChanged(newPosition)
-             if (newPosition < oldPosition) clipboardRecyclerView.smoothScrollToPosition(newPosition)
-        }
+        clipboardAdapter.refresh()
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
         setToolbarButtonsActivatedStateOnPrefChange(KeyboardSwitcher.getInstance().clipboardStrip, key)
 
-        // The setting can only be changed from a settings screen, but adding it to this listener seems necessary: https://github.com/Helium314/HeliBoard/pull/1903#issuecomment-3478424606
-        if (::clipboardHistoryManager.isInitialized && key == Settings.PREF_CLIPBOARD_HISTORY_PINNED_FIRST) {
+        if (::clipboardHistoryManager.isInitialized && 
+            (key == Settings.PREF_CLIPBOARD_HISTORY_PINNED_FIRST || key == Settings.PREF_CLIPBOARD_FOLD_PINNED)) {
             // Ensure settings are reloaded first
             Settings.getInstance().onSharedPreferenceChanged(prefs, key)
             clipboardHistoryManager.sortHistoryEntries()
-            clipboardAdapter.notifyDataSetChanged()
+            clipboardAdapter.refresh()
         }
     }
 }
