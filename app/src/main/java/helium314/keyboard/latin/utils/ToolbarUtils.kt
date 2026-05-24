@@ -31,6 +31,9 @@ import android.graphics.drawable.Drawable
 import android.graphics.PixelFormat
 import android.graphics.Color
 import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.content.res.ColorStateList
 
 fun createToolbarKey(context: Context, key: ToolbarKey): ImageButton {
     val button = ImageButton(context, null, R.attr.suggestionWordStyle)
@@ -76,13 +79,59 @@ class TagDrawable(private val text: String) : Drawable() {
         style = Paint.Style.FILL
     }
 
+    private var tintList: ColorStateList? = null
+    private var tintMode: PorterDuff.Mode = PorterDuff.Mode.MULTIPLY
+    private var tintFilter: ColorFilter? = null
+    private var internalColorFilter: ColorFilter? = null
+
+    override fun setTintList(tint: ColorStateList?) {
+        tintList = tint
+        updateTintFilter()
+        invalidateSelf()
+    }
+
+    override fun setTintMode(tintMode: PorterDuff.Mode?) {
+        this.tintMode = tintMode ?: PorterDuff.Mode.MULTIPLY
+        updateTintFilter()
+        invalidateSelf()
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        internalColorFilter = colorFilter
+        updateTintFilter()
+        invalidateSelf()
+    }
+
+    override fun onStateChange(state: IntArray): Boolean {
+        if (tintList != null) {
+            updateTintFilter()
+            invalidateSelf()
+            return true
+        }
+        return super.onStateChange(state)
+    }
+
+    override fun isStateful(): Boolean {
+        return tintList?.isStateful == true || super.isStateful()
+    }
+
+    private fun updateTintFilter() {
+        val colors = tintList
+        if (colors != null) {
+            val color = colors.getColorForState(state, Color.WHITE)
+            tintFilter = PorterDuffColorFilter(color, tintMode)
+        } else {
+            tintFilter = null
+        }
+    }
+
     override fun draw(canvas: Canvas) {
         val bounds = bounds
         val cx = bounds.exactCenterX()
         val cy = bounds.exactCenterY()
 
         // Apply theme's active color/tint filter dynamically to all paints
-        val activeFilter = colorFilter
+        val activeFilter = tintFilter ?: internalColorFilter
         paint.colorFilter = activeFilter
         borderPaint.colorFilter = activeFilter
         fillPaint.colorFilter = activeFilter
@@ -109,12 +158,6 @@ class TagDrawable(private val text: String) : Drawable() {
         paint.alpha = alpha
         borderPaint.alpha = alpha
         fillPaint.alpha = (alpha * 0.137f).toInt()
-    }
-
-    override fun setColorFilter(colorFilter: ColorFilter?) {
-        paint.colorFilter = colorFilter
-        borderPaint.colorFilter = colorFilter
-        fillPaint.colorFilter = colorFilter
     }
 
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
