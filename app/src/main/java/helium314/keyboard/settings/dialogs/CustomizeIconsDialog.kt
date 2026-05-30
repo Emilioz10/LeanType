@@ -103,6 +103,9 @@ fun CustomizeIconsDialog(
         val iconsSet = mutableSetOf<Int>()
         iconsSet.addAll(iconsForName)
         KeyboardIconsSet.getAllIcons(ctx).forEach { iconsSet.addAll(it.value) }
+        iconsSet.add(R.drawable.ic_clear_all)
+        iconsSet.add(R.drawable.ic_clear_all_slanted)
+        iconsSet.add(R.drawable.ic_clipboard_slash)
         val icons = iconsSet.toList()
         val initialIcon = KeyboardIconsSet.instance.iconIds[iconName]
         var selectedIcon by rememberSaveable { mutableStateOf(initialIcon) }
