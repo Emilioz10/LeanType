@@ -217,6 +217,8 @@
     <string name="clear_clipboard_icon_summary">Select the icon style for the clear clipboard button</string>
     <string name="clear_clipboard_icon_bin">Trash bin</string>
     <string name="clear_clipboard_icon_sweep">Sweep / Clear all</string>
+    <string name="clear_clipboard_icon_sweep_slanted">Slanted lines</string>
+    <string name="clear_clipboard_icon_clipboard_slash">Outline clipboard with slash</string>
     <string name="clear_clipboard_icon_legacy">Classic clipboard</string>
     <string name="clipboard_pinned">Pinned</string>
     <!-- Hint for clipboard search bar -->

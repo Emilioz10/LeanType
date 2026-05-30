@@ -35,6 +35,8 @@ class KeyboardIconsSet private constructor() {
                 else -> R.drawable.sym_keyboard_clear_clipboard_lxx
             }
             "sweep" -> R.drawable.ic_clear_all
+            "sweep_slanted" -> R.drawable.ic_clear_all_slanted
+            "clipboard_slash" -> R.drawable.ic_clipboard_slash
             else -> when (iconStyle) {
                 KeyboardTheme.STYLE_ROUNDED -> R.drawable.ic_bin_rounded
                 else -> R.drawable.ic_bin

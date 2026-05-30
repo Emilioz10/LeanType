@@ -195,6 +195,8 @@ fun createPreferencesSettings(context: Context) = listOf(
         val items = listOf(
             stringResource(R.string.clear_clipboard_icon_bin) to "bin",
             stringResource(R.string.clear_clipboard_icon_sweep) to "sweep",
+            stringResource(R.string.clear_clipboard_icon_sweep_slanted) to "sweep_slanted",
+            stringResource(R.string.clear_clipboard_icon_clipboard_slash) to "clipboard_slash",
             stringResource(R.string.clear_clipboard_icon_legacy) to "legacy"
         )
         ListPreference(
