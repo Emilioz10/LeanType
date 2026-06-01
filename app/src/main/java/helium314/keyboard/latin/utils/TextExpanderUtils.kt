@@ -99,6 +99,30 @@ object TextExpanderUtils {
             result = result.replace("%day_short%", dayShortStr)
         }
 
+        // Resolve %month%
+        if (result.contains("%month%")) {
+            val monthStr = SimpleDateFormat("MMMM", Locale.getDefault()).format(Date())
+            result = result.replace("%month%", monthStr)
+        }
+
+        // Resolve %month_short%
+        if (result.contains("%month_short%")) {
+            val monthShortStr = SimpleDateFormat("MMM", Locale.getDefault()).format(Date())
+            result = result.replace("%month_short%", monthShortStr)
+        }
+
+        // Resolve %year%
+        if (result.contains("%year%")) {
+            val yearStr = SimpleDateFormat("yyyy", Locale.getDefault()).format(Date())
+            result = result.replace("%year%", yearStr)
+        }
+
+        // Resolve %week%
+        if (result.contains("%week%")) {
+            val weekStr = SimpleDateFormat("w", Locale.getDefault()).format(Date())
+            result = result.replace("%week%", weekStr)
+        }
+
         return result
     }
 

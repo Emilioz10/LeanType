@@ -274,11 +274,15 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                                                 PlaceholderChip(tag = "%date%", desc = "Date (YYYY-MM-DD)")
                                                 PlaceholderChip(tag = "%time%", desc = "Time (24h, HH:MM)")
                                                 PlaceholderChip(tag = "%time12%", desc = "Time (12h, hh:mm AM/PM)")
+                                                PlaceholderChip(tag = "%year%", desc = "Year (YYYY)")
+                                                PlaceholderChip(tag = "%week%", desc = "Week of year (1-53)")
                                             }
                                             Column(modifier = Modifier.weight(1.1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                                 PlaceholderChip(tag = "%clipboard%", desc = "Clipboard content")
                                                 PlaceholderChip(tag = "%day%", desc = "Day name (e.g. Monday)")
                                                 PlaceholderChip(tag = "%day_short%", desc = "Day short (e.g. Mon)")
+                                                PlaceholderChip(tag = "%month%", desc = "Month (e.g. June)")
+                                                PlaceholderChip(tag = "%month_short%", desc = "Month short (e.g. Jun)")
                                             }
                                         }
                                     }
@@ -484,8 +488,9 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         val tags = listOf(
-                            "%date%", "%time%", "%time12%",
-                            "%clipboard%", "%day%", "%day_short%"
+                            "%date%", "%time%", "%time12%", "%clipboard%",
+                            "%day%", "%day_short%", "%month%", "%month_short%",
+                            "%year%", "%week%"
                         )
                         tags.forEach { tag ->
                             Box(
