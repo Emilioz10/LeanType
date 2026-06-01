@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.isImeVisible
@@ -141,7 +142,7 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.12f)
                         ),
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp,
@@ -184,23 +185,76 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
                                 ) {
-                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        Text(
-                                            text = "How it works:",
-                                            style = MaterialTheme.typography.titleSmall,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = "1. Set a Prefix (e.g. '.' or ';') to avoid accidental triggers.\n" +
-                                                    "2. Add a Shortcut keyword (e.g. 'brb') and its Template expansion.\n" +
-                                                    "3. Type your Prefix + Shortcut on the keyboard (e.g. '.brb') and press Space or Punctuation to expand instantly!",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
+                                    Text(
+                                        text = "How it works:",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    
+                                    // Step 1
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        StepBadge(num = "1")
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "Set a Shortcut Prefix",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Text(
+                                                text = "Choose a prefix like '.' or ';' under prefix configuration to prevent accidental expansions.",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+
+                                    // Step 2
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        StepBadge(num = "2")
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "Add Custom Shortcuts",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Text(
+                                                text = "Define triggers (e.g. 'brb') and their expanded templates (e.g. 'Be right back!').",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+
+                                    // Step 3
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        StepBadge(num = "3")
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = "Type Prefix + Shortcut",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Text(
+                                                text = "Type your prefix followed by the shortcut keyword (e.g., '.brb') and press Space or punctuation on the keyboard to expand instantly.",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
                                     }
 
                                     HorizontalDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
@@ -209,40 +263,40 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                                         Text(
                                             text = "How Template Placeholders Work:",
                                             style = MaterialTheme.typography.titleSmall,
-                                            fontWeight = FontWeight.SemiBold,
+                                            fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = "Placeholders are special tags you can write in your templates. When you type the shortcut, LeanType automatically replaces them with real-time values (like the current date, time, or your clipboard content) before inserting the text.\n\n" +
+                                            text = "Placeholders are special tags you can write in your templates. When you type the shortcut, the keyboard automatically replaces them with real-time values (like the current date, time, or your clipboard content) before inserting the text.\n\n" +
                                                     "Example Template: 'Hi, let's meet on %day% at %time%! My clipboard says: %clipboard%'\n" +
                                                     "Expands to: 'Hi, let's meet on Monday at 14:30! My clipboard says: [copied text]'",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2f,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                     
                                     HorizontalDivider(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                                     
-                                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                         Text(
                                             text = "Supported Template Placeholders:",
                                             style = MaterialTheme.typography.titleSmall,
-                                            fontWeight = FontWeight.SemiBold,
+                                            fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                                         ) {
-                                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                                 PlaceholderChip(tag = "%date%", desc = "Date (YYYY-MM-DD)")
                                                 PlaceholderChip(tag = "%time%", desc = "Time (24h, HH:MM)")
                                                 PlaceholderChip(tag = "%time12%", desc = "Time (12h, hh:mm AM/PM)")
                                             }
-                                            Column(modifier = Modifier.weight(1.1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Column(modifier = Modifier.weight(1.1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                                 PlaceholderChip(tag = "%clipboard%", desc = "Clipboard content")
-                                                PlaceholderChip(tag = "%day%", desc = "Day (e.g. Monday)")
+                                                PlaceholderChip(tag = "%day%", desc = "Day name (e.g. Monday)")
                                                 PlaceholderChip(tag = "%day_short%", desc = "Day short (e.g. Mon)")
                                             }
                                         }
@@ -287,26 +341,47 @@ fun TextExpanderScreen(onClickBack: () -> Unit) {
                     if (shortcutsMap.isEmpty()) {
                         androidx.compose.material3.Card(
                             modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(24.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.05f)
                             )
                         ) {
                             Column(
-                                modifier = Modifier.padding(24.dp),
+                                modifier = Modifier.padding(vertical = 32.dp, horizontal = 24.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(56.dp)
+                                        .clip(androidx.compose.foundation.shape.CircleShape)
+                                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_edit),
+                                        contentDescription = "Edit",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
                                 Text(
                                     text = "No shortcuts configured yet.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
-                                    text = "Tap the '+' floating action button below to add your first text template!",
-                                    style = MaterialTheme.typography.bodySmall,
+                                    text = "Tap the 'Add Shortcut' floating button in the bottom corner to quickly create your first smart text expansion template.",
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.25f
                                 )
                             }
                         }
@@ -478,7 +553,8 @@ private fun ShortcutItem(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surface
-        )
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -488,29 +564,71 @@ private fun ShortcutItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "$prefix$shortcut",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "$prefix$shortcut",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = template,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    fontFamily = if (template.contains("%")) androidx.compose.ui.text.font.FontFamily.Monospace else null
                 )
             }
             
-            IconButton(onClick = onDelete) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_bin),
+                        contentDescription = "Delete shortcut",
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                    )
+                }
                 Icon(
-                    painter = painterResource(R.drawable.ic_bin),
-                    contentDescription = "Delete shortcut",
-                    tint = MaterialTheme.colorScheme.error
+                    painter = painterResource(R.drawable.ic_arrow_left),
+                    contentDescription = "Edit shortcut",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                    modifier = Modifier.rotate(180f)
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun StepBadge(num: String) {
+    Box(
+        modifier = Modifier
+            .size(24.dp)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(top = 1.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = num,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
