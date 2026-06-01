@@ -75,9 +75,16 @@ class DictionaryFacilitatorImpl : DictionaryFacilitator {
     private var changeFrom = ""
     private var changeTo = ""
 
+    private val SPELLING_DICTIONARY_TYPES = arrayOf(
+        Dictionary.TYPE_MAIN,
+        Dictionary.TYPE_CONTACTS,
+        Dictionary.TYPE_APPS,
+        Dictionary.TYPE_USER_HISTORY
+    )
+
     // Caches for spell checking word validity
-    private var mValidSpellingWordReadCache: LruCache<String, Boolean>? = null
-    private var mValidSpellingWordWriteCache: LruCache<String, Boolean>? = null
+    private var mValidSpellingWordReadCache: LruCache<String, Boolean>? = LruCache(500)
+    private var mValidSpellingWordWriteCache: LruCache<String, Boolean>? = LruCache(500)
 
     // Limit parallelism to prevent excessive CPU usage during dictionary operations
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default.limitedParallelism(2))
@@ -613,7 +620,8 @@ class DictionaryFacilitatorImpl : DictionaryFacilitator {
     // locale, and instead simply return true if word is in any of the available dictionaries
     override fun isValidSpellingWord(word: String): Boolean {
         mValidSpellingWordReadCache?.get(word)?.let { return it }
-        val result = dictionaryGroups.any { isValidWord(word, DictionaryFacilitator.ALL_DICTIONARY_TYPES, it) }
+        mValidSpellingWordWriteCache?.get(word)?.let { return it }
+        val result = dictionaryGroups.any { isValidWord(word, SPELLING_DICTIONARY_TYPES, it) }
         mValidSpellingWordReadCache?.put(word, result)
         return result
     }

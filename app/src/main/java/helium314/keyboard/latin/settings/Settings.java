@@ -523,8 +523,9 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
         if (!image.isFile())
             return null;
         try {
-            sCachedBackgroundImages[index] = new CenterCropDrawable(
-                    BitmapFactory.decodeFile(image.getAbsolutePath()));
+            final android.graphics.Bitmap bm = helium314.keyboard.latin.utils.BitmapUtils.decodeSampledBitmap(image, 2048, true);
+            if (bm == null) return null;
+            sCachedBackgroundImages[index] = new CenterCropDrawable(bm);
             return sCachedBackgroundImages[index];
         } catch (Exception e) {
             return null;
