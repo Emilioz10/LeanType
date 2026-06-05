@@ -261,9 +261,20 @@ class ClipboardHistoryManager(
             val md = java.security.MessageDigest.getInstance("MD5")
             val digest = md.digest(uri.toString().toByteArray())
             val hash = digest.joinToString("") { "%02x".format(it) }
-            val file = java.io.File(cacheDir, "img_${hash}.jpg")
+            val suffix = if (latinIME.mSettings.current.mCompressScreenshots) "_compressed" else ""
+            val file = java.io.File(cacheDir, "img_${hash}${suffix}.jpg")
             if (file.exists() && file.length() > 0) {
                 return file.absolutePath
+            }
+            
+            if (!latinIME.mSettings.current.mCompressScreenshots) {
+                resolver.openInputStream(uri)?.use { input ->
+                    file.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                    return file.absolutePath
+                }
+                return null
             }
             
             resolver.openInputStream(uri)?.use { input ->
