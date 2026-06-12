@@ -326,10 +326,21 @@ Touchpad Mode replaces the keyboard with a laptop-style touchpad overlay to cont
 *   **Toolbar shortcut**: Tap the **Touchpad** icon in the toolbar for a persistent touchpad overlay.
 
 ### Touchpad Gestures
-*   **Single-finger drag**: Moves the cursor in 2D space (simulating arrow keys left/right/up/down) to navigate text.
-*   **Two-finger drag**: Moves the cursor vertically (scrolling up/down) or horizontally (word-by-word navigation).
-*   **Two-finger tap**: Simulates Enter.
-*   **Two-finger double tap**: Copies selected text (or Selects All if no selection exists).
-*   **Three-finger tap**: Pastes clipboard contents at the cursor.
-*   **Long press (hold finger)**: Activates text selection mode. Dragging while holding will select text.
-*   **Double tap by single finger**: Selects the word under the cursor.
+
+#### 1 Finger (Navigation & Selection)
+*   **Drag**: Moves the cursor precisely character-by-character.
+*   **Double Tap**: Selects the word under the cursor.
+*   **Long Press & Drag**: Enters text selection mode and selects text as you drag.
+
+#### 2 Fingers (Fast Navigation & Copying)
+*   **Vertical Drag**: Moves the cursor vertically line-by-line.
+*   **Horizontal Drag**: Moves the cursor horizontally word-by-word.
+*   **Tap**: Simulates Enter.
+*   **Double Tap**: Copies selected text (or Selects All if no selection exists).
+
+#### 3 Fingers (Clipboard, Undo/Redo & Deletion)
+*   **Tap**: Pastes clipboard contents at the cursor.
+*   **Double Tap**: Cuts selected text.
+*   **Swipe Left**: Deletes/Backspaces selection (or deletes the word to the left of the cursor if no selection exists).
+*   **Swipe Up**: Undo.
+*   **Swipe Down**: Redo.

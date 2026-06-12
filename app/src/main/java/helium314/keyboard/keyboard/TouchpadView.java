@@ -34,6 +34,11 @@ public class TouchpadView extends LinearLayout {
         void onScroll(int direction);
         void onTwoFingerDoubleTap();
         void onThreeFingerTap();
+        void onThreeFingerDoubleTap();
+        void onThreeFingerSwipeLeft();
+        void onThreeFingerSwipeRight();
+        void onThreeFingerSwipeUp();
+        void onThreeFingerSwipeDown();
     }
 
     private TouchpadListener mListener;
@@ -68,9 +73,19 @@ public class TouchpadView extends LinearLayout {
         }
     };
 
-    // Three-finger tap tracking
+    // Three-finger tap & swipe tracking
     private boolean mIsThreeFingerTap;
     private long mThreeFingerDownTime;
+    private long mLastThreeFingerTapTime = 0;
+    private final Runnable mThreeFingerTapRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mListener != null) mListener.onThreeFingerTap();
+        }
+    };
+    private boolean mIsThreeFingerSwipe;
+    private float mThreeFingerStartX;
+    private float mThreeFingerStartY;
 
     private static final int SCROLL_THRESHOLD = 40;
 
@@ -186,6 +201,9 @@ public class TouchpadView extends LinearLayout {
                     } else if (pointerCount == 3) {
                         mIsThreeFingerTap = true;
                         mThreeFingerDownTime = System.currentTimeMillis();
+                        mIsThreeFingerSwipe = true;
+                        mThreeFingerStartX = (event.getX(0) + event.getX(1) + event.getX(2)) / 3f;
+                        mThreeFingerStartY = (event.getY(0) + event.getY(1) + event.getY(2)) / 3f;
                         mIsTwoFingerScroll = false;
                         mIsTwoFingerTap = false;
                         mIsDragging = false;
@@ -224,6 +242,35 @@ public class TouchpadView extends LinearLayout {
                             mIsTwoFingerTap = false;
                             if (mListener != null) mListener.onScroll(KeyCode.ARROW_UP);
                             mScrollAccY += SCROLL_THRESHOLD;
+                        }
+                    } else if (mIsThreeFingerSwipe && pointerCount >= 3) {
+                        float midX = (event.getX(0) + event.getX(1) + event.getX(2)) / 3f;
+                        float midY = (event.getY(0) + event.getY(1) + event.getY(2)) / 3f;
+                        float deltaX = midX - mThreeFingerStartX;
+                        float deltaY = midY - mThreeFingerStartY;
+
+                        float density = getContext().getResources().getDisplayMetrics().density;
+                        float swipeThreshold = 50f * density;
+
+                        if (Math.abs(deltaX) > swipeThreshold || Math.abs(deltaY) > swipeThreshold) {
+                            mIsThreeFingerTap = false;
+                            mIsThreeFingerSwipe = false;
+
+                            if (mListener != null) {
+                                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                                    if (deltaX < 0) {
+                                        mListener.onThreeFingerSwipeLeft();
+                                    } else {
+                                        mListener.onThreeFingerSwipeRight();
+                                    }
+                                } else {
+                                    if (deltaY < 0) {
+                                        mListener.onThreeFingerSwipeUp();
+                                    } else {
+                                        mListener.onThreeFingerSwipeDown();
+                                    }
+                                }
+                            }
                         }
                     } else if (mIsDragging && pointerCount == 1) {
                         float deltaX = event.getX() - mLastTouchX;
@@ -265,6 +312,7 @@ public class TouchpadView extends LinearLayout {
                     mIsTwoFingerScroll = false;
                     mIsTwoFingerTap = false;
                     mIsThreeFingerTap = false;
+                    mIsThreeFingerSwipe = false;
                     if (mSelectionMode) {
                         mSelectionMode = false;
                         applySurfaceColor();
@@ -288,9 +336,18 @@ public class TouchpadView extends LinearLayout {
                         mIsTwoFingerTap = false;
                     } else if (pointerCount == 3) {
                         if (mIsThreeFingerTap && (System.currentTimeMillis() - mThreeFingerDownTime) < 300) {
-                            if (mListener != null) mListener.onThreeFingerTap();
+                            long now = System.currentTimeMillis();
+                            if (now - mLastThreeFingerTapTime < 350) {
+                                removeCallbacks(mThreeFingerTapRunnable);
+                                if (mListener != null) mListener.onThreeFingerDoubleTap();
+                                mLastThreeFingerTapTime = 0;
+                            } else {
+                                mLastThreeFingerTapTime = now;
+                                postDelayed(mThreeFingerTapRunnable, 250);
+                            }
                         }
                         mIsThreeFingerTap = false;
+                        mIsThreeFingerSwipe = false;
                     }
                     return true;
             }
