@@ -1969,6 +1969,33 @@ public final class InputLogic {
         return true;
     }
 
+    private static boolean isSpaceStrippingPunctuation(final int codePoint) {
+        return codePoint == '.'
+                || codePoint == ','
+                || codePoint == ';'
+                || codePoint == ':'
+                || codePoint == '!'
+                || codePoint == '?'
+                || codePoint == ')'
+                || codePoint == ']'
+                || codePoint == '}'
+                || codePoint == '؟' // Arabic question mark
+                || codePoint == '،' // Arabic comma
+                || codePoint == '؛' // Arabic semicolon
+                || codePoint == '।' // Hindi Danda
+                || codePoint == '॥' // Hindi Double Danda
+                || codePoint == '。' // CJK full stop
+                || codePoint == '、' // CJK enumeration comma
+                || codePoint == '，' // CJK fullwidth comma
+                || codePoint == '？' // CJK fullwidth question mark
+                || codePoint == '！' // CJK fullwidth exclamation mark
+                || codePoint == '：' // CJK fullwidth colon
+                || codePoint == '；' // CJK fullwidth semicolon
+                || codePoint == '）' // CJK fullwidth closing parenthesis
+                || codePoint == '】' // CJK fullwidth closing bracket
+                || codePoint == '』'; // CJK fullwidth closing quote
+    }
+
     /*
      * Strip a trailing space if necessary and returns whether it's a swap weak
      * space situation.
@@ -1988,6 +2015,14 @@ public final class InputLogic {
             mConnection.removeTrailingSpace();
             return false;
         }
+
+        if (isSpaceStrippingPunctuation(codePoint)
+                && !inputTransaction.getSettingsValues().isUsuallyPrecededBySpace(codePoint)) {
+            if (mConnection.getCodePointBeforeCursor() == Constants.CODE_SPACE) {
+                mConnection.removeTrailingSpace();
+            }
+        }
+
         if ((SpaceState.WEAK == inputTransaction.getSpaceState()
                 || SpaceState.SWAP_PUNCTUATION == inputTransaction.getSpaceState())
                 && isFromSuggestionStrip) {
