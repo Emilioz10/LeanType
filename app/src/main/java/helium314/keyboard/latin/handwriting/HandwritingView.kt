@@ -5,8 +5,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.graphics.drawable.GradientDrawable
 import helium314.keyboard.keyboard.KeyboardActionListener
 import helium314.keyboard.keyboard.KeyboardId
 import helium314.keyboard.keyboard.KeyboardLayoutSet
@@ -113,6 +115,45 @@ class HandwritingView @JvmOverloads constructor(
 
         clearCanvasAndComposition()
 
+        val hasPlugin = HandwritingLoader.hasPlugin(context)
+        val overlay = findViewById<View>(R.id.handwriting_plugin_overlay)
+        if (!hasPlugin) {
+            overlay?.visibility = View.VISIBLE
+            val titleText = findViewById<TextView>(R.id.handwriting_plugin_title)
+            val summaryText = findViewById<TextView>(R.id.handwriting_plugin_summary)
+            val iconView = findViewById<ImageView>(R.id.handwriting_plugin_icon)
+            val button = findViewById<TextView>(R.id.handwriting_plugin_button)
+
+            if (titleText != null) titleText.setTextColor(colors.get(ColorType.KEY_TEXT))
+            if (summaryText != null) summaryText.setTextColor(colors.get(ColorType.KEY_HINT_TEXT))
+            if (iconView != null) colors.setColor(iconView, ColorType.KEY_ICON)
+
+            if (button != null) {
+                val btnBackground = GradientDrawable().apply {
+                    shape = GradientDrawable.RECTANGLE
+                    cornerRadius = 8f * context.resources.displayMetrics.density
+                    setColor(colors.get(ColorType.ACTION_KEY_BACKGROUND))
+                }
+                button.background = btnBackground
+                button.setTextColor(colors.get(ColorType.KEY_TEXT))
+
+                button.setOnClickListener {
+                    val intent = android.content.Intent()
+                    intent.setClass(context, helium314.keyboard.settings.SettingsActivity2::class.java)
+                    intent.putExtra("screen", helium314.keyboard.settings.SettingsDestination.Libraries)
+                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e("HandwritingView", "Failed to start settings activity", e)
+                    }
+                    KeyboardSwitcher.getInstance().latinIME?.requestHideSelf(0)
+                }
+            }
+        } else {
+            overlay?.visibility = View.GONE
+        }
+
         val recognizer = HandwritingLoader.getRecognizer(context)
         if (recognizer != null) {
             recognizer.setLanguage(language)
@@ -144,8 +185,6 @@ class HandwritingView @JvmOverloads constructor(
                     }
                 }
             }
-        } else {
-            android.widget.Toast.makeText(context, "Please load handwriting plugin in Settings -> Libraries hub", android.widget.Toast.LENGTH_LONG).show()
         }
     }
 
