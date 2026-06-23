@@ -59,11 +59,11 @@ This fork adds **optional AI-powered features** using Gemini, Groq, and OpenAI-c
         <img alt="Get it on GitHub" src="docs/images/get-it-on-github.png" height="90">
       </a>
     </td>
-    <td align="center" valign="middle">
+    <!-- <td align="center" valign="middle">
       <a href="https://f-droid.org/en/packages/com.leanbitlab.leantype/index.html">
         <img alt="Get it on F-Droid" src="docs/images/get-it-on-fdroid.png" height="90">
       </a>
-    </td>
+    </td> -->
     <td align="center" valign="middle">
       <a href="https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/LeanBitLab/HeliboardL">
         <img alt="Get it on Obtainium" src="docs/images/get-it-on-obtainium.png" height="60">
