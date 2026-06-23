@@ -1110,6 +1110,32 @@ class SuggestionStripView(context: Context, attrs: AttributeSet?, defStyle: Int)
     }
 
     /**
+     * ponytail: Shows a download button in the suggestion strip (used in split toolbar mode).
+     * @param onClick Callback when the download button is tapped
+     * @param isDownloading Whether the dictionary is currently downloading
+     */
+    fun setEmojiDownloadButton(onClick: java.lang.Runnable, isDownloading: Boolean) {
+        if (!Settings.getValues().mSplitToolbar) return
+        isShowingEmojiSuggestions = true
+        suggestionsStrip.removeAllViews()
+
+        val btn = android.widget.Button(context)
+        btn.text = if (isDownloading) "Downloading..." else "Download Dictionary"
+        btn.textSize = 12f
+        btn.isAllCaps = false
+        btn.isEnabled = !isDownloading
+        btn.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        btn.setOnClickListener {
+            onClick.run()
+        }
+        suggestionsStrip.addView(btn)
+        suggestionsStrip.isVisible = true
+    }
+
+    /**
      * Clears emoji suggestions and restores normal suggestion strip state.
      */
     fun clearEmojiSuggestions() {
