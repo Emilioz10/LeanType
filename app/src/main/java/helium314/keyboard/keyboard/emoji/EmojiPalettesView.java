@@ -1160,8 +1160,8 @@ public final class EmojiPalettesView extends LinearLayout
                         Toast.makeText(getContext(), "Emoji dictionary installed!", Toast.LENGTH_SHORT).show();
                         initDictionaryFacilitator();
                         if (mInSearchMode) {
+                            // ponytail: close search mode automatically on successful dictionary download
                             stopSearchMode();
-                            startSearchMode();
                         }
                     });
                 } else {
